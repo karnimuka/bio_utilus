@@ -45,4 +45,11 @@ def check_quality(quality: str, quality_threshold: int = 0) -> bool:
         return False
 
 
-#
+# чтение файла
+def read_fastq(file):
+    name = file.readline()
+    sequence = file.readline()
+    plus = file.readline()
+    quality = file.readline()
+
+    return name, sequence, plus, quality
