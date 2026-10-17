@@ -50,3 +50,31 @@ def convert_multiline_fasta_to_oneline(input_fasta, output_fasta):
                 sequence += line
         if sequence != "":
             write_sequence(output_file, sequence)
+
+
+# вытаскиваем наилучшие совпадения с базой
+from helpers.bio_files import get_description
+
+
+def parse_blast_output(input_file: str, output_file: str):
+    proteins = []
+    with open(input_file) as file:
+        for line in file:
+            # Находим таблицу совпадений
+            if "Sequences producing significant alignments:" in line:
+                # Пропускаем заголовоки
+                file.readline()
+                file.readline()
+                # Читаем первое совпадение
+                best_hit = file.readline()
+
+                # Получаем название белка
+                if best_hit.strip() != "":
+                    protein = get_description(best_hit)
+                    proteins.append(protein)
+    # Сортируем названия
+    proteins.sort()
+    # Записываем результат
+    with open(output_file, "w") as file:
+        for protein in proteins:
+            file.write(protein + "\n")
