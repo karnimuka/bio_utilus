@@ -1,5 +1,6 @@
 from helpers.fastq import read_fastq, check_gc, check_length, check_quality
 import os
+from helpers.bio_files import write_sequence
 
 
 def filter_fastq(
@@ -28,3 +29,24 @@ def filter_fastq(
                 output_file.write(sequence)
                 output_file.write(plus)
                 output_file.write(quality)
+
+
+# Converts multiline FASTA to one line FASTA
+def convert_multiline_fasta_to_oneline(input_fasta, output_fasta):
+    sequence = ""
+
+    with open(input_fasta) as input_file, open(output_fasta, "w") as output_file:
+        for line in input_file:
+            line = line.strip()
+
+            if line.startswith(">"):
+                if sequence != "":
+                    write_sequence(output_file, sequence)
+
+                output_file.write(line + "\n")
+                sequence = ""
+
+            else:
+                sequence += line
+        if sequence != "":
+            write_sequence(output_file, sequence)
